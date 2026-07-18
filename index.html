@@ -23,7 +23,7 @@
         .page {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            padding: 40px 25px;
+            padding: 24px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -42,48 +42,80 @@
         }
         
         .logo {
-            font-size: 42px;
+            font-size: clamp(32px, 8vw, 46px);
             font-weight: 900;
             background: linear-gradient(90deg, #c026d3, #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            line-height: 1;
         }
         
         .subtitle {
             color: #b3b3b3;
-            font-size: 18px;
-            margin-bottom: 50px;
+            font-size: clamp(16px, 4.5vw, 20px);
+            margin-bottom: 40px;
+            font-weight: 500;
         }
         
         .card {
             background: #1f1b2e;
-            border-radius: 28px;
-            padding: 40px 30px;
+            border-radius: 24px;
+            padding: 32px 24px;
             width: 100%;
             max-width: 420px;
             box-shadow: 0 20px 60px rgba(192, 38, 211, 0.25);
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: clamp(22px, 6vw, 28px);
+            margin: 0 0 16px 0;
+            line-height: 1.3;
+        }
+        
+        .description {
+            font-size: clamp(15px, 4vw, 17px);
+            color: #d1d5db;
+            line-height: 1.6;
         }
         
         button {
-            margin-top: 30px;
+            width: 100%;
+            max-width: 320px;
+            margin-top: 20px;
             background: linear-gradient(90deg, var(--accent), #7e22ce);
             color: white;
             border: none;
-            padding: 16px 50px;
-            font-size: 18px;
+            padding: 16px 24px;
+            font-size: clamp(16px, 4.5vw, 18px);
             font-weight: 700;
             border-radius: 9999px;
             cursor: pointer;
             transition: transform 0.2s ease;
+            box-shadow: 0 8px 25px rgba(192, 38, 211, 0.3);
         }
         
         button:active {
-            transform: scale(0.95);
+            transform: scale(0.97);
         }
         
-        .status-red { color: #ef4444; font-size: 22px; font-weight: 700; }
-        .status-green { color: #22c55e; font-size: 22px; font-weight: 700; }
+        .status-red { 
+            color: #ef4444; 
+            font-size: clamp(20px, 5.5vw, 24px); 
+            font-weight: 700; 
+        }
+        
+        .status-green { 
+            color: #22c55e; 
+            font-size: clamp(20px, 5.5vw, 24px); 
+            font-weight: 700; 
+        }
+        
+        .user-name {
+            color: #e879f9;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -94,8 +126,8 @@
         <p class="subtitle">твой путь к успеху</p>
 
         <div class="card">
-            <h2>Приветствую вас, <span id="username" style="color:#e879f9;"></span></h2>
-            <p style="color:#d1d5db; margin-top:15px;">Premium Product Lollipop.cc</p>
+            <h2>Приветствую вас, <span class="user-name" id="username"></span></h2>
+            <p class="description">Premium Product Lollipop.cc</p>
         </div>
 
         <button onclick="switchPage('page2')">ПРОВЕРИТЬ ПОДПИСКУ →</button>
@@ -122,7 +154,7 @@
         if (user) {
             currentUsername = user.username ? user.username.toLowerCase() : '';
             document.getElementById('username').textContent = 
-                user.username ? '@' + user.username : user.first_name;
+                user.username ? '@' + user.username : (user.first_name || 'Геймер');
         }
 
         const premiumUsers = ['wellsecurity', 'exesvater'];
@@ -132,19 +164,17 @@
             
             pages.forEach(page => {
                 if (page.id === targetId) {
-                    // Показываем целевую страницу
                     page.style.transition = 'none';
                     page.style.opacity = '0';
                     page.style.transform = (targetId === 'page2') ? 'translateX(40px)' : 'translateX(-40px)';
                     
-                    page.offsetHeight; // Force reflow
+                    page.offsetHeight;
                     
                     page.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
                     page.style.opacity = '1';
                     page.style.transform = 'translateX(0)';
                     page.classList.add('active');
                     
-                    // Заполняем контент второй страницы
                     if (targetId === 'page2') {
                         const card = document.getElementById('subscriptionCard');
                         
@@ -152,18 +182,17 @@
                             card.innerHTML = `
                                 <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
                                 <p class="status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</p>
-                                <p style="color:#86efac; margin-top:15px;">У вас полный доступ ко всем функциям</p>
+                                <p style="color:#86efac; margin-top:15px; font-size:15px;">У вас полный доступ ко всем функциям</p>
                             `;
                         } else {
                             card.innerHTML = `
                                 <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
                                 <p class="status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</p>
-                                <p style="color:#fca5a5; margin-top:15px;">Оформите подписку для полного доступа</p>
+                                <p style="color:#fca5a5; margin-top:15px; font-size:15px;">Оформите подписку для полного доступа</p>
                             `;
                         }
                     }
                 } else {
-                    // Скрываем остальные страницы
                     page.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
                     page.style.opacity = '0';
                     page.style.transform = (page.id === 'page1') ? 'translateX(-40px)' : 'translateX(40px)';
