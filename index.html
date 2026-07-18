@@ -44,16 +44,15 @@
         .logo {
             font-size: clamp(34px, 9vw, 48px);
             font-weight: 900;
-            background: linear-gradient(90deg, #c026d3, #a855f7, #c026d3);
-            background-size: 200% 200%;
+            background: linear-gradient(90deg, #e879f9, #c026d3, #a855f7, #e879f9);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 4px;
-            animation: neonShift 8s linear infinite;
-            text-shadow: 0 0 25px #c026d3, 0 0 45px #a855f7;
+            animation: softShift 12s ease infinite;
         }
         
-        @keyframes neonShift {
+        @keyframes softShift {
             0%   { background-position: 0% 50%; }
             50%  { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
@@ -65,7 +64,6 @@
             margin-bottom: 42px;
             font-weight: 500;
             letter-spacing: 0.8px;
-            text-shadow: 0 0 12px rgba(179, 179, 179, 0.6);
         }
         
         .card {
@@ -85,7 +83,6 @@
             line-height: 1.35;
             font-weight: 700;
             text-align: center;
-            text-shadow: 0 0 15px #e879f9;
         }
         
         .status {
@@ -104,13 +101,13 @@
         .status-green {
             background: linear-gradient(90deg, #166534, #22c55e);
             color: white;
-            box-shadow: 0 0 20px #22c55e, 0 0 35px rgba(34, 197, 94, 0.5);
+            box-shadow: 0 0 20px #22c55e, 0 0 35px rgba(34, 197, 94, 0.4);
         }
         
         .status-red {
             background: linear-gradient(90deg, #7f1d1d, #ef4444);
             color: white;
-            box-shadow: 0 0 20px #ef4444, 0 0 35px rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 20px #ef4444, 0 0 35px rgba(239, 68, 68, 0.4);
         }
         
         .stat {
@@ -126,7 +123,6 @@
         .value {
             color: white;
             font-weight: 600;
-            text-shadow: 0 0 8px rgba(255,255,255,0.4);
         }
         
         button {
@@ -161,7 +157,7 @@
 
         <div class="card">
             <h2>Приветствую вас, <span class="user-name" id="username"></span></h2>
-            <p style="color:#b3b3b3; text-align:center; margin-top:8px; text-shadow: 0 0 10px rgba(179,179,179,0.5);">Premium Product Lollipop.cc</p>
+            <p style="color:#b3b3b3; text-align:center; margin-top:8px;">Premium Product Lollipop.cc</p>
         </div>
 
         <button onclick="switchPage('page2')">ПРОВЕРИТЬ ПОДПИСКУ →</button>
