@@ -31,9 +31,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            transform: translateX(30px);
+            transition: all 0.5s ease;
         }
         
         .active {
@@ -64,7 +62,6 @@
             width: 100%;
             max-width: 420px;
             box-shadow: 0 20px 60px rgba(192, 38, 211, 0.25);
-            border: 1px solid rgba(192, 38, 211, 0.2);
         }
         
         button {
@@ -77,11 +74,6 @@
             font-weight: 700;
             border-radius: 9999px;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        button:active {
-            transform: scale(0.95);
         }
         
         .status-red { color: #ef4444; font-size: 22px; font-weight: 700; }
@@ -119,27 +111,24 @@
         tg.expand();
 
         const user = tg.initDataUnsafe.user;
-        const usernameEl = document.getElementById('username');
-        
         let currentUsername = '';
+        
         if (user) {
             currentUsername = user.username ? user.username.toLowerCase() : '';
-            usernameEl.textContent = user.username ? '@' + user.username : user.first_name;
+            document.getElementById('username').textContent = user.username ? '@' + user.username : user.first_name;
         }
 
         const premiumUsers = ['wellsecurity', 'exesvater'];
 
         function goToPage2() {
             const page1 = document.getElementById('page1');
-            const page2 = document.getElementById('page2');
-            
             page1.style.opacity = '0';
-            page1.style.transform = 'translateX(-30px)';
+            page1.style.transform = 'translateX(-40px)';
             
             setTimeout(() => {
                 page1.classList.remove('active');
-                page2.classList.add('active');
                 
+                const page2 = document.getElementById('page2');
                 const card = document.getElementById('subscriptionCard');
                 
                 if (premiumUsers.includes(currentUsername)) {
@@ -155,19 +144,21 @@
                         <p style="color:#fca5a5; margin-top:15px;">Оформите подписку для полного доступа</p>
                     `;
                 }
-            }, 300);
+                
+                page2.classList.add('active');
+                page2.style.opacity = '1';
+                page2.style.transform = 'translateX(0)';
+            }, 250);
         }
 
         function goToPage1() {
             const page2 = document.getElementById('page2');
-            const page1 = document.getElementById('page1');
-            
             page2.style.opacity = '0';
-            page2.style.transform = 'translateX(30px)';
+            page2.style.transform = 'translateX(40px)';
             
             setTimeout(() => {
                 page2.classList.remove('active');
-                page1.classList.add('active');
+                document.getElementById('page1').classList.add('active');
             }, 300);
         }
     </script>
