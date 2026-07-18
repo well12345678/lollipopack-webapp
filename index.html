@@ -54,7 +54,7 @@
             justify-content: center;
             text-align: center;
             opacity: 0;
-            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(40px);
         }
         
@@ -196,7 +196,6 @@
         tg.ready();
         tg.expand();
 
-        // Частицы
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 35; i++) {
@@ -222,28 +221,36 @@
 
         const premiumUsers = ['wellsecurity', 'exesvater'];
 
-        // Новая стабильная функция переключения
         function switchPage(targetId) {
             const allPages = document.querySelectorAll('.page');
+            const targetPage = document.getElementById(targetId);
             
             // Скрываем все страницы
             allPages.forEach(page => {
-                page.classList.remove('active');
-                page.style.opacity = '0';
-                page.style.transform = 'translateX(40px)';
+                if (page !== targetPage) {
+                    page.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    page.style.opacity = '0';
+                    page.style.transform = (page.id === 'page1') ? 'translateX(-40px)' : 'translateX(40px)';
+                    
+                    setTimeout(() => {
+                        page.classList.remove('active');
+                        page.style.display = 'none';
+                    }, 400);
+                }
             });
             
-            // Показываем нужную страницу
+            // Показываем целевую страницу
+            targetPage.style.transition = 'none';
+            targetPage.style.opacity = '0';
+            targetPage.style.transform = (targetId === 'page2') ? 'translateX(40px)' : 'translateX(-40px)';
+            targetPage.style.display = 'flex';
+            targetPage.classList.add('active');
+            
+            targetPage.offsetHeight; // force reflow
+            
+            // Плавное появление
             setTimeout(() => {
-                const targetPage = document.getElementById(targetId);
-                targetPage.classList.add('active');
-                targetPage.style.transition = 'none';
-                targetPage.style.opacity = '0';
-                targetPage.style.transform = (targetId === 'page2') ? 'translateX(40px)' : 'translateX(-40px)';
-                
-                targetPage.offsetHeight; // force reflow
-                
-                targetPage.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                targetPage.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)';
                 targetPage.style.opacity = '1';
                 targetPage.style.transform = 'translateX(0)';
                 
@@ -271,10 +278,9 @@
                         `;
                     }
                 }
-            }, 50);
+            }, 30);
         }
 
-        // Запуск частиц
         createParticles();
     </script>
 </body>
