@@ -21,7 +21,6 @@
             position: relative;
         }
         
-        /* Фон с частицами */
         .particles {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -46,24 +45,22 @@
         }
         
         .page {
-            position: relative;
-            z-index: 2;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
             padding: 28px 22px;
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            min-height: 100vh;
             opacity: 0;
-            pointer-events: none;
             transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(40px);
         }
         
         .page.active {
+            display: flex;
             opacity: 1;
-            pointer-events: all;
             transform: translateX(0);
         }
         
@@ -103,8 +100,47 @@
             backdrop-filter: blur(8px);
         }
         
-        /* Остальные стили без изменений */
-        h2, .status, button { /* ... */ }
+        h2 {
+            font-size: clamp(21px, 5.5vw, 26px);
+            margin: 0 0 16px 0;
+            line-height: 1.3;
+            font-weight: 700;
+        }
+        
+        .status {
+            font-size: clamp(18.5px, 4.8vw, 22px);
+            font-weight: 800;
+            margin: 12px 0 22px;
+            padding: 14px 26px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            letter-spacing: 0.6px;
+        }
+        
+        .status-green {
+            background: linear-gradient(90deg, #166534, #22c55e);
+            color: white;
+            box-shadow: 0 0 18px #22c55e;
+        }
+        
+        .status-red {
+            background: linear-gradient(90deg, #7f1d1d, #ef4444);
+            color: white;
+            box-shadow: 0 0 18px #ef4444;
+        }
+        
+        .stat {
+            margin: 13px 0;
+            font-size: clamp(14.5px, 3.8vw, 15.5px);
+        }
+        
+        .label {
+            color: #b3b3b3;
+            font-weight: 500;
+        }
         
         button {
             width: 100%;
@@ -160,7 +196,7 @@
         tg.ready();
         tg.expand();
 
-        // Создаём частицы
+        // Частицы
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 35; i++) {
@@ -186,55 +222,56 @@
 
         const premiumUsers = ['wellsecurity', 'exesvater'];
 
+        // Новая стабильная функция переключения
         function switchPage(targetId) {
-            const pages = document.querySelectorAll('.page');
+            const allPages = document.querySelectorAll('.page');
             
-            pages.forEach(page => {
-                if (page.id === targetId) {
-                    page.style.transition = 'none';
-                    page.style.opacity = '0';
-                    page.style.transform = (targetId === 'page2') ? 'translateX(40px)' : 'translateX(-40px)';
-                    
-                    page.offsetHeight;
-                    
-                    page.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    page.style.opacity = '1';
-                    page.style.transform = 'translateX(0)';
-                    page.classList.add('active');
-                    
-                    if (targetId === 'page2') {
-                        const card = document.getElementById('subscriptionCard');
-                        
-                        if (premiumUsers.includes(currentUsername)) {
-                            card.innerHTML = `
-                                <h2>Статус подписки</h2>
-                                <div class="status status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</div>
-                                <div class="stat"><span class="label">Версия:</span> <span class="value">Admin Version</span></div>
-                                <div class="stat"><span class="label">Статус:</span> <span class="value">Навсегда</span></div>
-                                <div class="stat"><span class="label">Оплачено:</span> <span class="value">19.07.2026</span></div>
-                                <div class="stat"><span class="label">Завершение:</span> <span class="value">∞ (Бессрочно)</span></div>
-                            `;
-                        } else {
-                            card.innerHTML = `
-                                <h2>Статус подписки</h2>
-                                <div class="status status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</div>
-                                <div class="stat"><span class="label">Версия:</span> <span class="value">—</span></div>
-                                <div class="stat"><span class="label">Оплачено:</span> <span class="value">—</span></div>
-                                <div class="stat"><span class="label">Завершение:</span> <span class="value">—</span></div>
-                                <p style="color:#fca5a5; margin-top:22px; font-size:14px; text-align:center;">Оформите подписку для доступа к премиум-функциям</p>
-                            `;
-                        }
-                    }
-                } else {
-                    page.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                    page.style.opacity = '0';
-                    page.style.transform = (page.id === 'page1') ? 'translateX(-40px)' : 'translateX(40px)';
-                    
-                    setTimeout(() => {
-                        page.classList.remove('active');
-                    }, 400);
-                }
+            // Скрываем все страницы
+            allPages.forEach(page => {
+                page.classList.remove('active');
+                page.style.opacity = '0';
+                page.style.transform = 'translateX(40px)';
             });
+            
+            // Показываем нужную страницу
+            setTimeout(() => {
+                const targetPage = document.getElementById(targetId);
+                targetPage.classList.add('active');
+                targetPage.style.transition = 'none';
+                targetPage.style.opacity = '0';
+                targetPage.style.transform = (targetId === 'page2') ? 'translateX(40px)' : 'translateX(-40px)';
+                
+                targetPage.offsetHeight; // force reflow
+                
+                targetPage.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                targetPage.style.opacity = '1';
+                targetPage.style.transform = 'translateX(0)';
+                
+                // Заполняем вторую страницу
+                if (targetId === 'page2') {
+                    const card = document.getElementById('subscriptionCard');
+                    
+                    if (premiumUsers.includes(currentUsername)) {
+                        card.innerHTML = `
+                            <h2>Статус подписки</h2>
+                            <div class="status status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</div>
+                            <div class="stat"><span class="label">Версия:</span> <span class="value">Admin Version</span></div>
+                            <div class="stat"><span class="label">Статус:</span> <span class="value">Навсегда</span></div>
+                            <div class="stat"><span class="label">Оплачено:</span> <span class="value">19.07.2026</span></div>
+                            <div class="stat"><span class="label">Завершение:</span> <span class="value">∞ (Бессрочно)</span></div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <h2>Статус подписки</h2>
+                            <div class="status status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</div>
+                            <div class="stat"><span class="label">Версия:</span> <span class="value">—</span></div>
+                            <div class="stat"><span class="label">Оплачено:</span> <span class="value">—</span></div>
+                            <div class="stat"><span class="label">Завершение:</span> <span class="value">—</span></div>
+                            <p style="color:#fca5a5; margin-top:22px; font-size:14px; text-align:center;">Оформите подписку для доступа к премиум-функциям</p>
+                        `;
+                    }
+                }
+            }, 50);
         }
 
         // Запуск частиц
