@@ -31,9 +31,16 @@
             align-items: center;
             justify-content: center;
             text-align: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateX(30px);
         }
         
-        .active { display: flex !important; }
+        .active {
+            display: flex !important;
+            opacity: 1;
+            transform: translateX(0);
+        }
         
         .logo {
             font-size: 42px;
@@ -57,6 +64,7 @@
             width: 100%;
             max-width: 420px;
             box-shadow: 0 20px 60px rgba(192, 38, 211, 0.25);
+            border: 1px solid rgba(192, 38, 211, 0.2);
         }
         
         button {
@@ -69,19 +77,15 @@
             font-weight: 700;
             border-radius: 9999px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
-        .status-red {
-            color: #ef4444;
-            font-size: 22px;
-            font-weight: 700;
+        button:active {
+            transform: scale(0.95);
         }
         
-        .status-green {
-            color: #22c55e;
-            font-size: 22px;
-            font-weight: 700;
-        }
+        .status-red { color: #ef4444; font-size: 22px; font-weight: 700; }
+        .status-green { color: #22c55e; font-size: 22px; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -104,9 +108,7 @@
         <div class="logo">lollipop.cc</div>
         <p class="subtitle">твой путь к успеху</p>
 
-        <div class="card" id="subscriptionCard">
-            <!-- Статус будет вставлен через JS -->
-        </div>
+        <div class="card" id="subscriptionCard"></div>
 
         <button onclick="goToPage1()">← НАЗАД</button>
     </div>
@@ -125,33 +127,48 @@
             usernameEl.textContent = user.username ? '@' + user.username : user.first_name;
         }
 
-        // Специальные пользователи
         const premiumUsers = ['wellsecurity', 'exesvater'];
 
         function goToPage2() {
-            document.getElementById('page1').classList.remove('active');
-            document.getElementById('page2').classList.add('active');
-
-            const card = document.getElementById('subscriptionCard');
+            const page1 = document.getElementById('page1');
+            const page2 = document.getElementById('page2');
             
-            if (premiumUsers.includes(currentUsername)) {
-                card.innerHTML = `
-                    <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
-                    <p class="status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</p>
-                    <p style="color:#86efac; margin-top:15px;">У вас полный доступ ко всем функциям</p>
-                `;
-            } else {
-                card.innerHTML = `
-                    <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
-                    <p class="status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</p>
-                    <p style="color:#fca5a5; margin-top:15px;">Оформите подписку для полного доступа</p>
-                `;
-            }
+            page1.style.opacity = '0';
+            page1.style.transform = 'translateX(-30px)';
+            
+            setTimeout(() => {
+                page1.classList.remove('active');
+                page2.classList.add('active');
+                
+                const card = document.getElementById('subscriptionCard');
+                
+                if (premiumUsers.includes(currentUsername)) {
+                    card.innerHTML = `
+                        <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
+                        <p class="status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</p>
+                        <p style="color:#86efac; margin-top:15px;">У вас полный доступ ко всем функциям</p>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
+                        <p class="status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</p>
+                        <p style="color:#fca5a5; margin-top:15px;">Оформите подписку для полного доступа</p>
+                    `;
+                }
+            }, 300);
         }
 
         function goToPage1() {
-            document.getElementById('page2').classList.remove('active');
-            document.getElementById('page1').classList.add('active');
+            const page2 = document.getElementById('page2');
+            const page1 = document.getElementById('page1');
+            
+            page2.style.opacity = '0';
+            page2.style.transform = 'translateX(30px)';
+            
+            setTimeout(() => {
+                page2.classList.remove('active');
+                page1.classList.add('active');
+            }, 300);
         }
     </script>
 </body>
