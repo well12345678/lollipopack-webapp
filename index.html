@@ -190,17 +190,15 @@
                         const card = document.getElementById('subscriptionCard');
                         
                         if (premiumUsers.includes(currentUsername)) {
-                            // Admin Version — навсегда
                             card.innerHTML = `
                                 <h2>Статус подписки</h2>
                                 <p class="status-green" style="margin:12px 0 20px;">✅ ПОДПИСКА ДЕЙСТВУЕТ</p>
                                 <div class="stat"><span class="label">Версия:</span> <span class="value">Admin Version</span></div>
                                 <div class="stat"><span class="label">Статус:</span> <span class="value">Навсегда</span></div>
-                                <div class="stat"><span class="label">Оплачено:</span> <span class="value">01.01.2025</span></div>
+                                <div class="stat"><span class="label">Оплачено:</span> <span class="value">19.07.2026</span></div>
                                 <div class="stat"><span class="label">Завершение:</span> <span class="value">∞ (Бессрочно)</span></div>
                             `;
                         } else {
-                            // Обычные пользователи
                             card.innerHTML = `
                                 <h2>Статус подписки</h2>
                                 <p class="status-red" style="margin:12px 0 20px;">❌ ПОДПИСКА ОТСУТСТВУЕТ</p>
