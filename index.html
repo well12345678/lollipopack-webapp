@@ -3,37 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lollipopack Web App</title>
+    <title>Lollipopack</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1c1c1c;
-            color: white;
-            text-align: center;
-            padding: 40px 20px;
-            margin: 0;
-            min-height: 100vh;
+        :root {
+            --bg: #0a0a0a;
+            --card: #1a1a1a;
+            --accent: #c026d3;     /* Фиолетово-розовый */
+            --accent2: #7e22ce;
+            --text: #ffffff;
+            --subtext: #aaaaaa;
         }
-        h1 { font-size: 28px; margin-bottom: 10px; }
-        p { color: #aaa; }
-        button {
-            margin-top: 40px;
-            padding: 16px 32px;
+        
+        body {
+            font-family: 'Montserrat', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a0033 100%);
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 36px;
+            font-weight: 900;
+            margin: 30px 0 8px;
+            background: linear-gradient(90deg, #c026d3, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: var(--subtext);
+            text-align: center;
+            margin-bottom: 30px;
             font-size: 18px;
-            background: #229ed9;
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 28px;
+            margin: 20px 0;
+            box-shadow: 0 10px 40px rgba(192, 38, 211, 0.15);
+            border: 1px solid rgba(192, 38, 211, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
             color: white;
             border: none;
-            border-radius: 12px;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 9999px;
+            margin: 12px 0;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(192, 38, 211, 0.3);
+        }
+        
+        button:active {
+            transform: scale(0.96);
+        }
+        
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(192,38,211,0.25) 0%, transparent 70%);
+            filter: blur(60px);
+            z-index: -1;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
         }
     </style>
 </head>
 <body>
-    <h1>👋 Привет из Web App!</h1>
-    <p>Telegram Mini App для @lollipopack_bot</p>
-    
-    <button onclick="sendToBot()">Отправить данные боту</button>
+    <div class="glow"></div>
+    <div class="container">
+        <h1>LOLLIPOPACK</h1>
+        <p class="subtitle">stories</p>
+
+        <div class="card">
+            <h2 style="margin:0 0 15px 0; font-size:26px;">👋 Добро пожаловать</h2>
+            <p style="color:var(--subtext); line-height:1.5;">
+                Твой стильный Telegram Mini App
+            </p>
+        </div>
+
+        <button onclick="sendToBot()">НАЧАТЬ</button>
+        <button onclick="tg.close()">ЗАКРЫТЬ</button>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -42,12 +113,14 @@
 
         function sendToBot() {
             const data = {
-                message: "Данные из Web App",
+                action: "start",
                 user: tg.initDataUnsafe.user,
-                timestamp: new Date().toISOString()
+                time: new Date().toISOString()
             };
             tg.sendData(JSON.stringify(data));
-            tg.showPopup({message: "✅ Данные отправлены боту!"});
+            tg.showPopup({ 
+                message: "✅ Данные отправлены в бота!" 
+            });
         }
     </script>
 </body>
