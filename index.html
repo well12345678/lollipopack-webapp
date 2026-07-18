@@ -7,8 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg: #0a0a0a;
-            --card: #1f1b2e;
             --accent: #c026d3;
         }
         
@@ -26,17 +24,20 @@
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             padding: 40px 25px;
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            transition: all 0.5s ease;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(40px);
         }
         
-        .active {
-            display: flex !important;
+        .page.active {
             opacity: 1;
+            pointer-events: all;
             transform: translateX(0);
         }
         
@@ -56,7 +57,7 @@
         }
         
         .card {
-            background: var(--card);
+            background: #1f1b2e;
             border-radius: 28px;
             padding: 40px 30px;
             width: 100%;
@@ -74,6 +75,11 @@
             font-weight: 700;
             border-radius: 9999px;
             cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        button:active {
+            transform: scale(0.95);
         }
         
         .status-red { color: #ef4444; font-size: 22px; font-weight: 700; }
@@ -92,7 +98,7 @@
             <p style="color:#d1d5db; margin-top:15px;">Premium Product Lollipop.cc</p>
         </div>
 
-        <button onclick="goToPage2()">ПРОВЕРИТЬ ПОДПИСКУ →</button>
+        <button onclick="switchPage('page2')">ПРОВЕРИТЬ ПОДПИСКУ →</button>
     </div>
 
     <!-- Страница 2 -->
@@ -102,7 +108,7 @@
 
         <div class="card" id="subscriptionCard"></div>
 
-        <button onclick="goToPage1()">← НАЗАД</button>
+        <button onclick="switchPage('page1')">← НАЗАД</button>
     </div>
 
     <script>
@@ -115,51 +121,58 @@
         
         if (user) {
             currentUsername = user.username ? user.username.toLowerCase() : '';
-            document.getElementById('username').textContent = user.username ? '@' + user.username : user.first_name;
+            document.getElementById('username').textContent = 
+                user.username ? '@' + user.username : user.first_name;
         }
 
         const premiumUsers = ['wellsecurity', 'exesvater'];
 
-        function goToPage2() {
-            const page1 = document.getElementById('page1');
-            page1.style.opacity = '0';
-            page1.style.transform = 'translateX(-40px)';
+        function switchPage(targetId) {
+            const pages = document.querySelectorAll('.page');
             
-            setTimeout(() => {
-                page1.classList.remove('active');
-                
-                const page2 = document.getElementById('page2');
-                const card = document.getElementById('subscriptionCard');
-                
-                if (premiumUsers.includes(currentUsername)) {
-                    card.innerHTML = `
-                        <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
-                        <p class="status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</p>
-                        <p style="color:#86efac; margin-top:15px;">У вас полный доступ ко всем функциям</p>
-                    `;
+            pages.forEach(page => {
+                if (page.id === targetId) {
+                    // Показываем целевую страницу
+                    page.style.transition = 'none';
+                    page.style.opacity = '0';
+                    page.style.transform = (targetId === 'page2') ? 'translateX(40px)' : 'translateX(-40px)';
+                    
+                    page.offsetHeight; // Force reflow
+                    
+                    page.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    page.style.opacity = '1';
+                    page.style.transform = 'translateX(0)';
+                    page.classList.add('active');
+                    
+                    // Заполняем контент второй страницы
+                    if (targetId === 'page2') {
+                        const card = document.getElementById('subscriptionCard');
+                        
+                        if (premiumUsers.includes(currentUsername)) {
+                            card.innerHTML = `
+                                <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
+                                <p class="status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</p>
+                                <p style="color:#86efac; margin-top:15px;">У вас полный доступ ко всем функциям</p>
+                            `;
+                        } else {
+                            card.innerHTML = `
+                                <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
+                                <p class="status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</p>
+                                <p style="color:#fca5a5; margin-top:15px;">Оформите подписку для полного доступа</p>
+                            `;
+                        }
+                    }
                 } else {
-                    card.innerHTML = `
-                        <h2 style="margin:0 0 20px 0;">Статус подписки</h2>
-                        <p class="status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</p>
-                        <p style="color:#fca5a5; margin-top:15px;">Оформите подписку для полного доступа</p>
-                    `;
+                    // Скрываем остальные страницы
+                    page.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    page.style.opacity = '0';
+                    page.style.transform = (page.id === 'page1') ? 'translateX(-40px)' : 'translateX(40px)';
+                    
+                    setTimeout(() => {
+                        page.classList.remove('active');
+                    }, 400);
                 }
-                
-                page2.classList.add('active');
-                page2.style.opacity = '1';
-                page2.style.transform = 'translateX(0)';
-            }, 250);
-        }
-
-        function goToPage1() {
-            const page2 = document.getElementById('page2');
-            page2.style.opacity = '0';
-            page2.style.transform = 'translateX(40px)';
-            
-            setTimeout(() => {
-                page2.classList.remove('active');
-                document.getElementById('page1').classList.add('active');
-            }, 300);
+            });
         }
     </script>
 </body>
