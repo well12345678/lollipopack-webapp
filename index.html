@@ -78,12 +78,15 @@
         }
         
         .status {
-            font-size: clamp(21px, 5.5vw, 26px);
+            font-size: clamp(19px, 5vw, 23px);
             font-weight: 800;
             margin: 12px 0 20px;
-            padding: 12px 24px;
-            border-radius: 16px;
-            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;           /* ← Запрещаем перенос */
             letter-spacing: 0.5px;
         }
         
