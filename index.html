@@ -179,29 +179,25 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.3);
         }
         
-        input {
-            width: 100%;
-            padding: 13px 16px;
-            border-radius: 14px;
-            border: none;
-            background: #2a2438;
-            color: white;
-            font-size: 15px;
-            margin: 10px 0;
-            outline: none;
+        .admin-stats {
+            margin-top: 8px;
         }
         
-        .admin-list {
+        .admin-stats .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .premium-list {
             margin-top: 16px;
-            max-height: 160px;
-            overflow-y: auto;
-            font-size: 13.5px;
+            font-size: 14px;
             color: #d1d5db;
         }
         
-        .admin-list div {
-            padding: 7px 0;
-            border-bottom: 1px solid #333;
+        .premium-list div {
+            padding: 6px 0;
         }
     </style>
 </head>
@@ -238,13 +234,28 @@
         <p class="subtitle">Админ-панель</p>
 
         <div class="card">
-            <h2>Активация подписки</h2>
+            <h2>Статистика</h2>
             
-            <input type="text" id="searchInput" placeholder="Username или Telegram ID">
-            
-            <button onclick="activateSubscription()">Активировать подписку</button>
-            
-            <div class="admin-list" id="activatedList"></div>
+            <div class="admin-stats">
+                <div class="stat">
+                    <span class="label">Всего подписок:</span>
+                    <span class="value" id="totalSubs">2</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Админы:</span>
+                    <span class="value">2</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Premium:</span>
+                    <span class="value" id="premiumCount">0</span>
+                </div>
+            </div>
+
+            <div class="premium-list" id="premiumList">
+                <b style="color:#e879f9;">Активные подписки:</b>
+                <div>✅ @wellsecurity (Admin)</div>
+                <div>✅ @exesvater (Admin)</div>
+            </div>
         </div>
 
         <button class="btn-secondary" onclick="switchPage('page2')">← НАЗАД</button>
@@ -280,21 +291,17 @@
                 user.username ? '@' + user.username : (user.first_name || 'Геймер');
         }
 
+        // Список пользователей с подпиской (сюда добавляем вручную)
+        const premiumUsers = [
+            'wellsecurity',
+            'exesvater'
+            // Когда скажешь — добавлю сюда новых
+        ];
+
         const adminUsers = ['wellsecurity', 'exesvater'];
 
-        function getActivatedUsers() {
-            const data = localStorage.getItem('activated_users');
-            return data ? JSON.parse(data) : [];
-        }
-
-        function saveActivatedUsers(list) {
-            localStorage.setItem('activated_users', JSON.stringify(list));
-        }
-
         function hasSubscription() {
-            if (adminUsers.includes(currentUsername)) return true;
-            const activated = getActivatedUsers();
-            return activated.includes(currentUsername) || activated.includes(currentUserId);
+            return premiumUsers.includes(currentUsername) || adminUsers.includes(currentUsername);
         }
 
         function switchPage(targetId) {
@@ -328,7 +335,6 @@
                 targetPage.style.transform = 'translateX(0)';
                 
                 if (targetId === 'page2') renderSubscriptionPage();
-                if (targetId === 'page3') renderActivatedList();
             }, 20);
         }
 
@@ -374,39 +380,6 @@
         function goToPayment() {
             alert('Ссылка на оплату пока не добавлена.\nСкажи мне ссылку — я её вставлю.');
             // window.open('СЮДА_ССЫЛКУ', '_blank');
-        }
-
-        function activateSubscription() {
-            const input = document.getElementById('searchInput').value.trim().toLowerCase().replace('@', '');
-            if (!input) {
-                alert('Введите username или ID');
-                return;
-            }
-
-            let list = getActivatedUsers();
-            if (!list.includes(input)) {
-                list.push(input);
-                saveActivatedUsers(list);
-                alert(`Подписка активирована для: ${input}`);
-            } else {
-                alert('Этот пользователь уже имеет подписку');
-            }
-
-            document.getElementById('searchInput').value = '';
-            renderActivatedList();
-        }
-
-        function renderActivatedList() {
-            const list = getActivatedUsers();
-            const container = document.getElementById('activatedList');
-            
-            if (list.length === 0) {
-                container.innerHTML = '<div style="color:#888;">Пока никого нет</div>';
-                return;
-            }
-
-            container.innerHTML = '<b>Активированные:</b><br>' + 
-                list.map(u => `<div>✅ ${u}</div>`).join('');
         }
 
         createParticles();
