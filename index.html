@@ -404,42 +404,47 @@
         tg.ready();
         tg.expand();
 
-        // ===== УНИКАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ =====
-        const COUNTER_NAMESPACE = 'lollipopcc';
-        const COUNTER_KEY = 'users';
+        // ===== СЧЁТЧИК УНИКАЛЬНЫХ ПОЛЬЗОВАТЕЛЕЙ =====
+        const COUNTER_KEY = 'lollipop_users_v2';
 
         async function trackUniqueUser() {
             const user = tg.initDataUnsafe.user;
-            if (!user) return;
+            if (!user || !user.id) return;
 
             const userId = String(user.id);
-            const storageKey = 'lollipop_visited_' + userId;
+            const visitedKey = 'visited_' + userId;
 
-            // Если этот пользователь уже заходил с этого устройства — ничего не делаем
-            if (localStorage.getItem(storageKey)) {
+            // Уже заходил с этого устройства?
+            if (localStorage.getItem(visitedKey)) {
                 return;
             }
 
-            // Первый раз — увеличиваем счётчик и запоминаем
             try {
-                await fetch(`https://api.countapi.xyz/hit/${COUNTER_NAMESPACE}/${COUNTER_KEY}`);
-                localStorage.setItem(storageKey, '1');
-            } catch (e) {
-                console.log('Ошибка счётчика');
+                // Увеличиваем счётчик
+                const response = await fetch(`https://api.countapi.xyz/hit/lollipopcc/${COUNTER_KEY}`);
+                const data = await response.json();
+                
+                if (data && data.value) {
+                    localStorage.setItem(visitedKey, '1');
+                    console.log('Новый пользователь засчитан:', data.value);
+                }
+            } catch (err) {
+                console.error('Ошибка счётчика:', err);
             }
         }
 
-        async function getUniqueUsers() {
+        async function getUniqueUsersCount() {
             try {
-                const res = await fetch(`https://api.countapi.xyz/get/${COUNTER_NAMESPACE}/${COUNTER_KEY}`);
-                const data = await res.json();
+                const response = await fetch(`https://api.countapi.xyz/get/lollipopcc/${COUNTER_KEY}`);
+                const data = await response.json();
                 return data.value || 0;
-            } catch (e) {
+            } catch (err) {
+                console.error('Не удалось получить счётчик');
                 return 0;
             }
         }
 
-        // Запускаем отслеживание
+        // Запускаем
         trackUniqueUser();
 
         function createParticles() {
@@ -536,8 +541,8 @@
         }
 
         async function updateAdminStats() {
-            const users = await getUniqueUsers();
-            document.getElementById('totalUsers').textContent = users;
+            const count = await getUniqueUsersCount();
+            document.getElementById('totalUsers').textContent = count;
         }
 
         function renderSubscriptionPage() {
