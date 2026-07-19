@@ -48,10 +48,45 @@
             100% { transform: translateY(-60px) scale(0.4); opacity: 0; }
         }
         
+        /* Аватар + юзернейм */
+        .user-badge {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(31, 27, 46, 0.85);
+            padding: 6px 12px 6px 6px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(192, 38, 211, 0.2);
+        }
+        
+        .user-badge img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #c026d3;
+        }
+        
+        .user-badge .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e879f9;
+            max-width: 110px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
         .page {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            padding: 20px 16px;
+            padding: 70px 16px 20px;
             display: none;
             flex-direction: column;
             align-items: center;
@@ -218,6 +253,12 @@
 
     <div class="particles" id="particles"></div>
 
+    <!-- Аватар + юзернейм -->
+    <div class="user-badge" id="userBadge">
+        <img id="userAvatar" src="" alt="avatar" style="display:none;">
+        <div class="name" id="userBadgeName">@user</div>
+    </div>
+
     <!-- Страница 1 -->
     <div id="page1" class="page active">
         <div class="logo">lollipop.cc</div>
@@ -271,7 +312,7 @@
             </div>
         </div>
 
-        <button class="btn-secondary" onclick="switchPage('page2')">← НАЗАД</button>
+        <button class="btn-secondary" onclick="switchPage('page2', true)">← НАЗАД</button>
     </div>
 
     <script>
@@ -298,8 +339,23 @@
         
         if (user) {
             currentUsername = user.username ? user.username.toLowerCase() : '';
+            
+            // Основное имя
             document.getElementById('username').textContent = 
                 user.username ? '@' + user.username : (user.first_name || 'Геймер');
+            
+            // Бейдж в углу
+            const badgeName = document.getElementById('userBadgeName');
+            const badgeAvatar = document.getElementById('userAvatar');
+            
+            badgeName.textContent = user.username ? '@' + user.username : (user.first_name || 'User');
+            
+            if (user.photo_url) {
+                badgeAvatar.src = user.photo_url;
+                badgeAvatar.style.display = 'block';
+            } else {
+                badgeAvatar.style.display = 'none';
+            }
         }
 
         const premiumUsers = ['wellsecurity', 'exesvater'];
@@ -309,14 +365,20 @@
             return premiumUsers.includes(currentUsername) || adminUsers.includes(currentUsername);
         }
 
-        function switchPage(targetId) {
+        function switchPage(targetId, isBack = false) {
             const allPages = document.querySelectorAll('.page');
             const targetPage = document.getElementById(targetId);
             
             allPages.forEach(page => {
                 if (page !== targetPage) {
                     page.style.opacity = '0';
-                    page.style.transform = (page.id === 'page1') ? 'translateX(-40px) scale(0.98)' : 'translateX(40px) scale(0.98)';
+                    
+                    // Направление анимации
+                    if (isBack) {
+                        page.style.transform = 'translateX(40px) scale(0.98)';
+                    } else {
+                        page.style.transform = (page.id === 'page1') ? 'translateX(-40px) scale(0.98)' : 'translateX(40px) scale(0.98)';
+                    }
                     
                     setTimeout(() => {
                         page.classList.remove('active');
@@ -329,7 +391,13 @@
                 targetPage.style.display = 'flex';
                 targetPage.classList.add('active');
                 targetPage.style.opacity = '0';
-                targetPage.style.transform = (targetId === 'page2' || targetId === 'page3') ? 'translateX(40px) scale(0.98)' : 'translateX(-40px) scale(0.98)';
+                
+                // Направление появления
+                if (isBack) {
+                    targetPage.style.transform = 'translateX(-40px) scale(0.98)';
+                } else {
+                    targetPage.style.transform = (targetId === 'page2' || targetId === 'page3') ? 'translateX(40px) scale(0.98)' : 'translateX(-40px) scale(0.98)';
+                }
                 
                 targetPage.offsetHeight;
                 
