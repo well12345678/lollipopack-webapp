@@ -10,6 +10,10 @@
             --accent: #c026d3;
         }
         
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
             background: #0a0a0a;
@@ -17,7 +21,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
         
@@ -31,31 +35,32 @@
         
         .particle {
             position: absolute;
-            background: rgba(192, 38, 211, 0.6);
+            background: rgba(192, 38, 211, 0.55);
             border-radius: 50%;
             animation: floatParticle linear infinite;
-            box-shadow: 0 0 8px #c026d3;
+            box-shadow: 0 0 6px #c026d3;
         }
         
         @keyframes floatParticle {
             0% { transform: translateY(100vh) scale(0.6); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { transform: translateY(-100px) scale(0.4); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-80px) scale(0.4); opacity: 0; }
         }
         
         .page {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            padding: 28px 22px;
+            padding: 24px 18px;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             opacity: 0;
-            transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateX(40px);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(30px);
+            overflow-y: auto;
         }
         
         .page.active {
@@ -65,13 +70,13 @@
         }
         
         .logo {
-            font-size: clamp(36px, 8.8vw, 46px);
+            font-size: clamp(32px, 8vw, 42px);
             font-weight: 900;
             background: linear-gradient(90deg, #ff69b4, #c026d3, #a855f7, #ff69b4);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             animation: gentleFlow 14s ease infinite;
         }
         
@@ -83,60 +88,63 @@
         
         .subtitle {
             color: #b3b3b3;
-            font-size: clamp(15.5px, 4vw, 18px);
-            margin-bottom: 40px;
+            font-size: clamp(14.5px, 3.8vw, 17px);
+            margin-bottom: 32px;
             font-weight: 500;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
         }
         
         .card {
             background: rgba(31, 27, 46, 0.95);
-            border-radius: 24px;
-            padding: 34px 26px;
+            border-radius: 22px;
+            padding: 28px 20px;
             width: 100%;
-            max-width: 360px;
-            box-shadow: 0 20px 55px rgba(192, 38, 211, 0.25);
-            margin-bottom: 26px;
+            max-width: 340px;
+            box-shadow: 0 16px 40px rgba(192, 38, 211, 0.22);
+            margin-bottom: 20px;
             backdrop-filter: blur(8px);
             text-align: left;
         }
         
         h2 {
-            font-size: clamp(21px, 5.5vw, 26px);
-            margin: 0 0 16px 0;
+            font-size: clamp(19px, 5vw, 24px);
+            margin: 0 0 14px 0;
             line-height: 1.3;
             font-weight: 700;
             text-align: center;
         }
         
         .status {
-            font-size: clamp(18.5px, 4.8vw, 22px);
+            font-size: clamp(16px, 4.2vw, 19px);
             font-weight: 800;
-            margin: 12px 0 22px;
-            padding: 14px 26px;
-            border-radius: 18px;
+            margin: 10px 0 18px;
+            padding: 12px 18px;
+            border-radius: 16px;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
             white-space: nowrap;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.4px;
+            width: 100%;
+            max-width: 100%;
         }
         
         .status-green {
             background: linear-gradient(90deg, #166534, #22c55e);
             color: white;
-            box-shadow: 0 0 18px #22c55e;
+            box-shadow: 0 0 16px rgba(34, 197, 94, 0.45);
         }
         
         .status-red {
             background: linear-gradient(90deg, #7f1d1d, #ef4444);
             color: white;
-            box-shadow: 0 0 18px #ef4444;
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
         }
         
         .stat {
-            margin: 13px 0;
-            font-size: clamp(14.5px, 3.8vw, 15.5px);
+            margin: 11px 0;
+            font-size: clamp(13.5px, 3.6vw, 15px);
         }
         
         .label {
@@ -146,53 +154,53 @@
         
         button {
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
             background: linear-gradient(90deg, #c026d3, #7e22ce);
             color: white;
             border: none;
-            padding: 17px 30px;
-            font-size: clamp(16.5px, 4.3vw, 18px);
+            padding: 15px 24px;
+            font-size: clamp(15.5px, 4vw, 17px);
             font-weight: 600;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.6px;
             border-radius: 9999px;
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
-            box-shadow: 0 10px 28px rgba(192, 38, 211, 0.35);
-            margin-top: 12px;
+            box-shadow: 0 8px 24px rgba(192, 38, 211, 0.35);
+            margin-top: 10px;
         }
         
         button:active {
-            transform: scale(0.94);
-            box-shadow: 0 5px 18px rgba(192, 38, 211, 0.3);
+            transform: scale(0.95);
+            box-shadow: 0 4px 14px rgba(192, 38, 211, 0.3);
         }
         
         .btn-secondary {
             background: linear-gradient(90deg, #4b5563, #6b7280);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
         }
         
         input {
             width: 100%;
-            padding: 14px 18px;
+            padding: 13px 16px;
             border-radius: 14px;
             border: none;
             background: #2a2438;
             color: white;
-            font-size: 16px;
-            margin: 12px 0;
+            font-size: 15px;
+            margin: 10px 0;
             outline: none;
         }
         
         .admin-list {
-            margin-top: 20px;
-            max-height: 180px;
+            margin-top: 16px;
+            max-height: 160px;
             overflow-y: auto;
-            font-size: 14px;
+            font-size: 13.5px;
             color: #d1d5db;
         }
         
         .admin-list div {
-            padding: 8px 0;
+            padding: 7px 0;
             border-bottom: 1px solid #333;
         }
     </style>
@@ -208,7 +216,7 @@
 
         <div class="card">
             <h2>Приветствую вас, <span id="username" style="color:#e879f9;"></span></h2>
-            <p style="color:#b3b3b3; text-align:center; margin-top:10px;">Premium Product Lollipop.cc</p>
+            <p style="color:#b3b3b3; text-align:center; margin-top:10px; font-size:15px;">Premium Product Lollipop.cc</p>
         </div>
 
         <button onclick="switchPage('page2')">ПРОВЕРИТЬ ПОДПИСКУ →</button>
@@ -247,17 +255,16 @@
         tg.ready();
         tg.expand();
 
-        // Частицы
         function createParticles() {
             const container = document.getElementById('particles');
-            for (let i = 0; i < 35; i++) {
+            for (let i = 0; i < 28; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
-                p.style.width = p.style.height = Math.random() * 4 + 2 + 'px';
+                p.style.width = p.style.height = Math.random() * 3.5 + 1.5 + 'px';
                 p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = (Math.random() * 18 + 12) + 's';
-                p.style.animationDelay = '-' + Math.random() * 20 + 's';
-                p.style.opacity = Math.random() * 0.6 + 0.3;
+                p.style.animationDuration = (Math.random() * 16 + 11) + 's';
+                p.style.animationDelay = '-' + Math.random() * 18 + 's';
+                p.style.opacity = Math.random() * 0.55 + 0.25;
                 container.appendChild(p);
             }
         }
@@ -273,10 +280,8 @@
                 user.username ? '@' + user.username : (user.first_name || 'Геймер');
         }
 
-        // Админы
         const adminUsers = ['wellsecurity', 'exesvater'];
 
-        // Загружаем активированных пользователей из localStorage
         function getActivatedUsers() {
             const data = localStorage.getItem('activated_users');
             return data ? JSON.parse(data) : [];
@@ -286,10 +291,8 @@
             localStorage.setItem('activated_users', JSON.stringify(list));
         }
 
-        // Проверка, есть ли подписка
         function hasSubscription() {
             if (adminUsers.includes(currentUsername)) return true;
-            
             const activated = getActivatedUsers();
             return activated.includes(currentUsername) || activated.includes(currentUserId);
         }
@@ -300,38 +303,33 @@
             
             allPages.forEach(page => {
                 if (page !== targetPage) {
-                    page.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    page.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
                     page.style.opacity = '0';
-                    page.style.transform = (page.id === 'page1') ? 'translateX(-40px)' : 'translateX(40px)';
+                    page.style.transform = (page.id === 'page1') ? 'translateX(-30px)' : 'translateX(30px)';
                     
                     setTimeout(() => {
                         page.classList.remove('active');
                         page.style.display = 'none';
-                    }, 400);
+                    }, 350);
                 }
             });
             
             targetPage.style.transition = 'none';
             targetPage.style.opacity = '0';
-            targetPage.style.transform = (targetId === 'page2' || targetId === 'page3') ? 'translateX(40px)' : 'translateX(-40px)';
+            targetPage.style.transform = (targetId === 'page2' || targetId === 'page3') ? 'translateX(30px)' : 'translateX(-30px)';
             targetPage.style.display = 'flex';
             targetPage.classList.add('active');
             
             targetPage.offsetHeight;
             
             setTimeout(() => {
-                targetPage.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)';
+                targetPage.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
                 targetPage.style.opacity = '1';
                 targetPage.style.transform = 'translateX(0)';
                 
-                if (targetId === 'page2') {
-                    renderSubscriptionPage();
-                }
-                
-                if (targetId === 'page3') {
-                    renderActivatedList();
-                }
-            }, 30);
+                if (targetId === 'page2') renderSubscriptionPage();
+                if (targetId === 'page3') renderActivatedList();
+            }, 20);
         }
 
         function renderSubscriptionPage() {
@@ -347,7 +345,7 @@
                     <div class="stat"><span class="label">Статус:</span> <span class="value">Навсегда</span></div>
                     <div class="stat"><span class="label">Оплачено:</span> <span class="value">19.07.2026</span></div>
                     <div class="stat"><span class="label">Завершение:</span> <span class="value">∞ (Бессрочно)</span></div>
-                    <button onclick="switchPage('page3')" style="margin-top:20px;">🔧 АДМИН-ПАНЕЛЬ</button>
+                    <button onclick="switchPage('page3')" style="margin-top:18px;">🔧 АДМИН-ПАНЕЛЬ</button>
                 `;
             } else if (isPremium) {
                 card.innerHTML = `
@@ -365,16 +363,15 @@
                     <div class="stat"><span class="label">Версия:</span> <span class="value">—</span></div>
                     <div class="stat"><span class="label">Оплачено:</span> <span class="value">—</span></div>
                     <div class="stat"><span class="label">Завершение:</span> <span class="value">—</span></div>
-                    <p style="color:#fca5a5; margin-top:18px; font-size:14px; text-align:center;">
+                    <p style="color:#fca5a5; margin-top:16px; font-size:13.5px; text-align:center;">
                         Оформите подписку для доступа к премиум-функциям
                     </p>
-                    <button onclick="goToPayment()" style="margin-top:16px;">💳 ОПЛАТИТЬ ПОДПИСКУ</button>
+                    <button onclick="goToPayment()" style="margin-top:14px;">💳 ОПЛАТИТЬ ПОДПИСКУ</button>
                 `;
             }
         }
 
         function goToPayment() {
-            // Пока ссылка-заглушка. Когда дашь реальную — заменим.
             alert('Ссылка на оплату пока не добавлена.\nСкажи мне ссылку — я её вставлю.');
             // window.open('СЮДА_ССЫЛКУ', '_blank');
         }
