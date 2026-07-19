@@ -6,8 +6,12 @@
     <title>lollipop.cc</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+        
         :root {
             --accent: #c026d3;
+            --accent2: #a855f7;
+            --pink: #ff69b4;
         }
         
         * {
@@ -18,91 +22,102 @@
         
         body {
             font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
-            background: #0a0a0a;
+            background: #07050f;
             color: white;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
         }
         
+        /* Фон */
+        .bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(192, 38, 211, 0.25), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168, 85, 247, 0.15), transparent),
+                #07050f;
+            z-index: -2;
+        }
+        
         .particles {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
             pointer-events: none;
             z-index: -1;
-            background: radial-gradient(circle at 50% 30%, #1a0033 0%, transparent 70%);
         }
         
         .particle {
             position: absolute;
-            background: rgba(192, 38, 211, 0.5);
+            background: rgba(192, 38, 211, 0.55);
             border-radius: 50%;
             animation: floatParticle linear infinite;
-            box-shadow: 0 0 5px #c026d3;
+            box-shadow: 0 0 8px rgba(192, 38, 211, 0.6);
         }
         
         @keyframes floatParticle {
-            0% { transform: translateY(100vh) scale(0.6); opacity: 0; }
-            10% { opacity: 0.65; }
-            90% { opacity: 0.65; }
-            100% { transform: translateY(-60px) scale(0.4); opacity: 0; }
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            15% { opacity: 0.7; }
+            85% { opacity: 0.7; }
+            100% { transform: translateY(-80px) scale(0.3); opacity: 0; }
         }
         
-        /* Аватар + юзернейм */
+        /* Бейдж пользователя */
         .user-badge {
             position: fixed;
-            top: 16px;
-            right: 16px;
+            top: 14px;
+            right: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(31, 27, 46, 0.85);
-            padding: 6px 12px 6px 6px;
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
+            background: rgba(20, 15, 35, 0.75);
+            padding: 5px 12px 5px 5px;
+            border-radius: 40px;
+            backdrop-filter: blur(16px);
             z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(192, 38, 211, 0.2);
+            border: 1px solid rgba(192, 38, 211, 0.25);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.35);
         }
         
         .user-badge img {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #c026d3;
+            border: 1.5px solid #c026d3;
         }
         
         .user-badge .name {
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 600;
-            color: #e879f9;
-            max-width: 110px;
+            color: #e9d5ff;
+            max-width: 100px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         
-        /* Toast уведомления */
+        /* Toast */
         .toast {
             position: fixed;
-            top: 80px;
+            top: 70px;
             left: 50%;
-            transform: translateX(-50%) translateY(-30px);
-            background: rgba(31, 27, 46, 0.95);
+            transform: translateX(-50%) translateY(-20px);
+            background: rgba(25, 18, 45, 0.95);
             color: white;
-            padding: 14px 22px;
+            padding: 13px 22px;
             border-radius: 16px;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             z-index: 999;
             opacity: 0;
             pointer-events: none;
             transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            border: 1px solid rgba(192, 38, 211, 0.3);
-            max-width: 90%;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+            border: 1px solid rgba(192, 38, 211, 0.35);
+            max-width: 88%;
             text-align: center;
+            backdrop-filter: blur(12px);
         }
         
         .toast.show {
@@ -113,8 +128,8 @@
         /* Лоадер */
         .loader {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(10, 10, 10, 0.6);
+            inset: 0;
+            background: rgba(7, 5, 15, 0.55);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -122,6 +137,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
         }
         
         .loader.show {
@@ -130,29 +146,30 @@
         }
         
         .spinner {
-            width: 42px;
-            height: 42px;
-            border: 3px solid rgba(192, 38, 211, 0.2);
-            border-top: 3px solid #c026d3;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(192, 38, 211, 0.15);
+            border-top-color: #c026d3;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: spin 0.75s linear infinite;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
+        /* Страницы */
         .page {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            padding: 70px 16px 20px;
+            inset: 0;
+            padding: 68px 16px 24px;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             opacity: 0;
-            transform: translateX(40px) scale(0.98);
+            transform: translateX(36px) scale(0.97);
             transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
                         transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
             overflow-y: auto;
@@ -165,14 +182,15 @@
         }
         
         .logo {
-            font-size: clamp(30px, 7.5vw, 40px);
+            font-size: clamp(32px, 8vw, 44px);
             font-weight: 900;
             background: linear-gradient(90deg, #ff69b4, #c026d3, #a855f7, #ff69b4);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 3px;
-            animation: gentleFlow 14s ease infinite;
+            margin-bottom: 2px;
+            animation: gentleFlow 12s ease infinite;
+            letter-spacing: -0.5px;
         }
         
         @keyframes gentleFlow {
@@ -182,26 +200,30 @@
         }
         
         .subtitle {
-            color: #b3b3b3;
-            font-size: clamp(13.5px, 3.6vw, 16px);
-            margin-bottom: 26px;
+            color: #a1a1aa;
+            font-size: clamp(13px, 3.5vw, 15.5px);
+            margin-bottom: 28px;
             font-weight: 500;
-            letter-spacing: 0.7px;
+            letter-spacing: 1px;
         }
         
+        /* Карточка */
         .card {
-            background: rgba(31, 27, 46, 0.95);
-            border-radius: 20px;
-            padding: 22px 18px;
+            background: rgba(25, 18, 45, 0.7);
+            border-radius: 22px;
+            padding: 24px 20px;
             width: 100%;
-            max-width: 320px;
-            box-shadow: 0 14px 36px rgba(192, 38, 211, 0.2);
+            max-width: 330px;
+            border: 1px solid rgba(192, 38, 211, 0.18);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255,255,255,0.03) inset;
             margin-bottom: 18px;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(20px);
             text-align: left;
             opacity: 0;
-            transform: translateY(20px) scale(0.96);
-            animation: cardIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            transform: translateY(18px) scale(0.97);
+            animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         
         @keyframes cardIn {
@@ -213,109 +235,114 @@
         
         h2 {
             font-size: clamp(18px, 4.8vw, 22px);
-            margin: 0 0 12px 0;
+            margin: 0 0 14px 0;
             line-height: 1.3;
             font-weight: 700;
             text-align: center;
+            color: #f5f3ff;
         }
         
         .status {
-            font-size: clamp(14.5px, 3.9vw, 17px);
+            font-size: clamp(14px, 3.8vw, 16.5px);
             font-weight: 800;
-            margin: 8px 0 16px;
-            padding: 11px 14px;
+            margin: 6px 0 18px;
+            padding: 12px 16px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 7px;
+            gap: 8px;
             white-space: nowrap;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
             width: 100%;
         }
         
         .status-green {
-            background: linear-gradient(90deg, #166534, #22c55e);
+            background: linear-gradient(135deg, #15803d, #22c55e);
             color: white;
-            box-shadow: 0 0 14px rgba(34, 197, 94, 0.4);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
         }
         
         .status-red {
-            background: linear-gradient(90deg, #7f1d1d, #ef4444);
+            background: linear-gradient(135deg, #991b1b, #ef4444);
             color: white;
-            box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
         }
         
         .stat {
-            margin: 9px 0;
+            margin: 10px 0;
             font-size: clamp(13px, 3.4vw, 14.5px);
+            display: flex;
+            justify-content: space-between;
         }
         
         .label {
-            color: #b3b3b3;
+            color: #a1a1aa;
             font-weight: 500;
         }
         
+        .value {
+            color: #f5f3ff;
+            font-weight: 600;
+        }
+        
+        /* Кнопки */
         button {
             width: 100%;
-            max-width: 300px;
-            background: linear-gradient(90deg, #c026d3, #7e22ce);
+            max-width: 310px;
+            background: linear-gradient(135deg, #c026d3, #7e22ce);
             color: white;
             border: none;
-            padding: 14px 20px;
+            padding: 15px 22px;
             font-size: clamp(14.5px, 3.8vw, 16px);
             font-weight: 600;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             border-radius: 9999px;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-            box-shadow: 0 7px 22px rgba(192, 38, 211, 0.38);
+            box-shadow: 0 8px 28px rgba(192, 38, 211, 0.4);
             margin-top: 8px;
         }
         
         button::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
-            transition: left 0.55s ease;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
         }
         
-        button:hover::before {
-            left: 100%;
+        button:active::before {
+            transform: translateX(100%);
         }
         
         button:active {
-            transform: scale(0.95);
-            box-shadow: 0 4px 12px rgba(192, 38, 211, 0.3);
+            transform: scale(0.96);
+            box-shadow: 0 4px 16px rgba(192, 38, 211, 0.3);
         }
         
         .btn-secondary {
-            background: linear-gradient(90deg, #4b5563, #6b7280);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #3f3f46, #52525b);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
         }
         
         .btn-share {
-            background: linear-gradient(90deg, #7c3aed, #a855f7);
-            margin-top: 10px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
         }
         
         .admin-stats .stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 7px 0;
-            border-bottom: 1px solid #333;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         
         .premium-list {
-            margin-top: 14px;
+            margin-top: 16px;
             font-size: 13.5px;
-            color: #d1d5db;
+            color: #d4d4d8;
         }
         
         .premium-list div {
@@ -325,19 +352,17 @@
 </head>
 <body>
 
+    <div class="bg"></div>
     <div class="particles" id="particles"></div>
     
-    <!-- Лоадер -->
     <div class="loader" id="loader">
         <div class="spinner"></div>
     </div>
     
-    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <!-- Аватар + юзернейм -->
-    <div class="user-badge" id="userBadge">
-        <img id="userAvatar" src="" alt="avatar" style="display:none;">
+    <div class="user-badge">
+        <img id="userAvatar" src="" alt="" style="display:none;">
         <div class="name" id="userBadgeName">@user</div>
     </div>
 
@@ -348,7 +373,7 @@
 
         <div class="card">
             <h2>Приветствую вас, <span id="username" style="color:#e879f9;"></span></h2>
-            <p style="color:#b3b3b3; text-align:center; margin-top:8px; font-size:14px;">Premium Product Lollipop.cc</p>
+            <p style="color:#a1a1aa; text-align:center; margin-top:8px; font-size:13.5px;">Premium Product Lollipop.cc</p>
         </div>
 
         <button onclick="switchPage('page2')">ПРОВЕРИТЬ ПОДПИСКУ →</button>
@@ -365,7 +390,7 @@
         <button onclick="switchPage('page1', true)">← НАЗАД</button>
     </div>
 
-    <!-- Страница 3 — Админ панель -->
+    <!-- Страница 3 -->
     <div id="page3" class="page">
         <div class="logo">lollipop.cc</div>
         <p class="subtitle">Админ-панель</p>
@@ -375,21 +400,21 @@
             
             <div class="admin-stats">
                 <div class="stat">
-                    <span class="label">Всего подписок:</span>
+                    <span class="label">Всего подписок</span>
                     <span class="value">2</span>
                 </div>
                 <div class="stat">
-                    <span class="label">Админы:</span>
+                    <span class="label">Админы</span>
                     <span class="value">2</span>
                 </div>
                 <div class="stat">
-                    <span class="label">Premium:</span>
+                    <span class="label">Premium</span>
                     <span class="value">0</span>
                 </div>
             </div>
 
             <div class="premium-list">
-                <b style="color:#e879f9;">Активные подписки:</b>
+                <b style="color:#e879f9;">Активные подписки</b>
                 <div>✅ @wellsecurity (Admin)</div>
                 <div>✅ @exesvater (Admin)</div>
             </div>
@@ -405,30 +430,25 @@
 
         function createParticles() {
             const container = document.getElementById('particles');
-            for (let i = 0; i < 24; i++) {
+            for (let i = 0; i < 22; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
-                p.style.width = p.style.height = Math.random() * 3 + 1.5 + 'px';
+                p.style.width = p.style.height = Math.random() * 3 + 1.2 + 'px';
                 p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                p.style.animationDelay = '-' + Math.random() * 16 + 's';
-                p.style.opacity = Math.random() * 0.5 + 0.25;
+                p.style.animationDuration = (Math.random() * 14 + 10) + 's';
+                p.style.animationDelay = '-' + Math.random() * 15 + 's';
+                p.style.opacity = Math.random() * 0.5 + 0.2;
                 container.appendChild(p);
             }
         }
 
-        // Toast
-        function showToast(message, duration = 2800) {
+        function showToast(message, duration = 2600) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, duration);
+            setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // Лоадер
         function showLoader() {
             document.getElementById('loader').classList.add('show');
         }
@@ -446,14 +466,13 @@
             document.getElementById('username').textContent = 
                 user.username ? '@' + user.username : (user.first_name || 'Геймер');
             
-            const badgeName = document.getElementById('userBadgeName');
-            const badgeAvatar = document.getElementById('userAvatar');
-            
-            badgeName.textContent = user.username ? '@' + user.username : (user.first_name || 'User');
+            document.getElementById('userBadgeName').textContent = 
+                user.username ? '@' + user.username : (user.first_name || 'User');
             
             if (user.photo_url) {
-                badgeAvatar.src = user.photo_url;
-                badgeAvatar.style.display = 'block';
+                const img = document.getElementById('userAvatar');
+                img.src = user.photo_url;
+                img.style.display = 'block';
             }
         }
 
@@ -473,12 +492,8 @@
             allPages.forEach(page => {
                 if (page !== targetPage) {
                     page.style.opacity = '0';
-                    
-                    if (isBack) {
-                        page.style.transform = 'translateX(40px) scale(0.98)';
-                    } else {
-                        page.style.transform = (page.id === 'page1') ? 'translateX(-40px) scale(0.98)' : 'translateX(40px) scale(0.98)';
-                    }
+                    page.style.transform = isBack ? 'translateX(36px) scale(0.97)' : 
+                        (page.id === 'page1' ? 'translateX(-36px) scale(0.97)' : 'translateX(36px) scale(0.97)');
                     
                     setTimeout(() => {
                         page.classList.remove('active');
@@ -491,12 +506,8 @@
                 targetPage.style.display = 'flex';
                 targetPage.classList.add('active');
                 targetPage.style.opacity = '0';
-                
-                if (isBack) {
-                    targetPage.style.transform = 'translateX(-40px) scale(0.98)';
-                } else {
-                    targetPage.style.transform = (targetId === 'page2' || targetId === 'page3') ? 'translateX(40px) scale(0.98)' : 'translateX(-40px) scale(0.98)';
-                }
+                targetPage.style.transform = isBack ? 'translateX(-36px) scale(0.97)' : 
+                    ((targetId === 'page2' || targetId === 'page3') ? 'translateX(36px) scale(0.97)' : 'translateX(-36px) scale(0.97)');
                 
                 targetPage.offsetHeight;
                 
@@ -505,16 +516,15 @@
                 
                 if (targetId === 'page2') renderSubscriptionPage();
                 
-                setTimeout(hideLoader, 350);
-            }, 60);
+                setTimeout(hideLoader, 320);
+            }, 50);
         }
 
         function renderSubscriptionPage() {
             const card = document.getElementById('subscriptionCard');
-            // Сбрасываем анимацию карточки
             card.style.animation = 'none';
             card.offsetHeight;
-            card.style.animation = 'cardIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+            card.style.animation = 'cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards';
             
             const isAdmin = adminUsers.includes(currentUsername);
             const isPremium = hasSubscription();
@@ -523,32 +533,32 @@
                 card.innerHTML = `
                     <h2>Статус подписки</h2>
                     <div class="status status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</div>
-                    <div class="stat"><span class="label">Версия:</span> <span class="value">Admin Version</span></div>
-                    <div class="stat"><span class="label">Статус:</span> <span class="value">Навсегда</span></div>
-                    <div class="stat"><span class="label">Оплачено:</span> <span class="value">19.07.2026</span></div>
-                    <div class="stat"><span class="label">Завершение:</span> <span class="value">∞ (Бессрочно)</span></div>
-                    <button onclick="switchPage('page3')" style="margin-top:14px;">🔧 АДМИН-ПАНЕЛЬ</button>
+                    <div class="stat"><span class="label">Версия</span> <span class="value">Admin Version</span></div>
+                    <div class="stat"><span class="label">Статус</span> <span class="value">Навсегда</span></div>
+                    <div class="stat"><span class="label">Оплачено</span> <span class="value">19.07.2026</span></div>
+                    <div class="stat"><span class="label">Завершение</span> <span class="value">∞ Бессрочно</span></div>
+                    <button onclick="switchPage('page3')" style="margin-top:16px;">🔧 АДМИН-ПАНЕЛЬ</button>
                 `;
             } else if (isPremium) {
                 card.innerHTML = `
                     <h2>Статус подписки</h2>
                     <div class="status status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</div>
-                    <div class="stat"><span class="label">Версия:</span> <span class="value">Premium</span></div>
-                    <div class="stat"><span class="label">Статус:</span> <span class="value">Активна</span></div>
-                    <div class="stat"><span class="label">Оплачено:</span> <span class="value">—</span></div>
-                    <div class="stat"><span class="label">Завершение:</span> <span class="value">—</span></div>
+                    <div class="stat"><span class="label">Версия</span> <span class="value">Premium</span></div>
+                    <div class="stat"><span class="label">Статус</span> <span class="value">Активна</span></div>
+                    <div class="stat"><span class="label">Оплачено</span> <span class="value">—</span></div>
+                    <div class="stat"><span class="label">Завершение</span> <span class="value">—</span></div>
                 `;
             } else {
                 card.innerHTML = `
                     <h2>Статус подписки</h2>
                     <div class="status status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</div>
-                    <div class="stat"><span class="label">Версия:</span> <span class="value">—</span></div>
-                    <div class="stat"><span class="label">Оплачено:</span> <span class="value">—</span></div>
-                    <div class="stat"><span class="label">Завершение:</span> <span class="value">—</span></div>
-                    <p style="color:#fca5a5; margin-top:12px; font-size:13px; text-align:center;">
+                    <div class="stat"><span class="label">Версия</span> <span class="value">—</span></div>
+                    <div class="stat"><span class="label">Оплачено</span> <span class="value">—</span></div>
+                    <div class="stat"><span class="label">Завершение</span> <span class="value">—</span></div>
+                    <p style="color:#fca5a5; margin-top:14px; font-size:12.5px; text-align:center; line-height:1.4;">
                         Оформите подписку для доступа к премиум-функциям
                     </p>
-                    <button onclick="goToPayment()" style="margin-top:12px;">💳 ОПЛАТИТЬ ПОДПИСКУ</button>
+                    <button onclick="goToPayment()" style="margin-top:14px;">💳 ОПЛАТИТЬ ПОДПИСКУ</button>
                 `;
             }
         }
@@ -558,12 +568,11 @@
         }
 
         function shareApp() {
-            const shareText = 'Проверь свою подписку в Lollipop.cc 🔥';
-            const shareUrl = 'https://t.me/твой_бот'; // замени на ссылку бота
+            const text = 'Проверь свою подписку в Lollipop.cc 🔥';
+            const url = 'https://t.me/твой_бот'; // замени на ссылку бота
             
             if (tg.openTelegramLink) {
-                // Можно использовать встроенный шаринг
-                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`);
             } else {
                 showToast('Ссылка скопирована');
             }
