@@ -285,15 +285,6 @@
             background: linear-gradient(135deg, #4f46e5, #6366f1);
         }
         
-        .plan-btn {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 20px;
-        }
-        
         .admin-stats .stat {
             padding: 8px 0;
             border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -384,27 +375,10 @@
         <button class="btn-secondary" onclick="switchPage('page1', true)">← НАЗАД</button>
     </div>
 
-    <!-- Страница 5 — Выбор тарифа -->
-    <div id="page5" class="page">
-        <div class="logo">lollipop.cc</div>
-        <p class="subtitle">Выбор подписки</p>
-        <div class="card">
-            <h2>Выберите тариф</h2>
-            <button class="plan-btn" onclick="payStars('buy_1')"><span>1 день</span><span>50 ⭐</span></button>
-            <button class="plan-btn" onclick="payStars('buy_7')"><span>7 дней</span><span>250 ⭐</span></button>
-            <button class="plan-btn" onclick="payStars('buy_14')"><span>14 дней</span><span>500 ⭐</span></button>
-            <button class="plan-btn" onclick="payStars('buy_30')"><span>30 дней</span><span>800 ⭐</span></button>
-        </div>
-        <button class="btn-secondary" onclick="switchPage('page2', true)">← НАЗАД</button>
-    </div>
-
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-
-        // Ссылка на твой Replit
-        const API_URL = 'https://727bfe89-4a3f-456e-b0d5-9adda5869575-00-2gvhc0z2lws1s.riker.replit.dev';
 
         function createParticles() {
             const container = document.getElementById('particles');
@@ -420,7 +394,7 @@
             }
         }
 
-        function showToast(message, duration = 2800) {
+        function showToast(message, duration = 2600) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.classList.add('show');
@@ -437,11 +411,9 @@
 
         const user = tg.initDataUnsafe.user;
         let currentUsername = '';
-        let currentUserId = '';
         
         if (user) {
             currentUsername = user.username ? user.username.toLowerCase() : '';
-            currentUserId = user.id || '';
             
             document.getElementById('username').textContent = 
                 user.username ? '@' + user.username : (user.first_name || 'Геймер');
@@ -456,6 +428,7 @@
             }
         }
 
+        // ===== СПИСОК ТЕХ, У КОГО ЕСТЬ ПОДПИСКА =====
         const premiumUsers = ['wellsecurity', 'exesvater'];
         const adminUsers = ['wellsecurity', 'exesvater'];
 
@@ -529,43 +502,12 @@
                     <div class="stat"><span class="label">Версия</span> <span class="value">—</span></div>
                     <div class="stat"><span class="label">Оплачено</span> <span class="value">—</span></div>
                     <div class="stat"><span class="label">Завершение</span> <span class="value">—</span></div>
-                    <p style="color:#fca5a5; margin-top:14px; font-size:12.5px; text-align:center;">
-                        Оформите подписку для доступа к премиум-функциям
+                    <p style="color:#fca5a5; margin-top:14px; font-size:12.5px; text-align:center; line-height:1.4;">
+                        Оформите подписку через бота<br>
+                        @lollipophack_bot
                     </p>
-                    <button onclick="switchPage('page5')" style="margin-top:14px;">⭐ ОПЛАТИТЬ ПОДПИСКУ</button>
                 `;
             }
-        }
-
-        // ===== Оплата Stars прямо в веб-приложении =====
-        async function payStars(plan) {
-            showLoader();
-            showToast('Создаём счёт...');
-
-            try {
-                const response = await fetch(`${API_URL}/api/create-invoice?plan=${plan}&user_id=${currentUserId}`);
-                const data = await response.json();
-
-                if (data.invoiceLink) {
-                    // Открываем оплату прямо внутри Mini App
-                    tg.openInvoice(data.invoiceLink, (status) => {
-                        if (status === 'paid') {
-                            showToast('✅ Оплата прошла успешно!');
-                        } else if (status === 'cancelled') {
-                            showToast('Оплата отменена');
-                        } else {
-                            showToast('Произошла ошибка');
-                        }
-                    });
-                } else {
-                    showToast('Не удалось создать счёт');
-                }
-            } catch (err) {
-                console.error(err);
-                showToast('Ошибка соединения с сервером');
-            }
-
-            hideLoader();
         }
 
         function shareApp() {
