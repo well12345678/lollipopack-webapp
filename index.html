@@ -1,112 +1,583 @@
-const TelegramBot = require('node-telegram-bot-api');
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>lollipop.cc</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Montserrat', system-ui, sans-serif;
+            background: #07050f;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(192, 38, 211, 0.25), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168, 85, 247, 0.15), transparent),
+                #07050f;
+            z-index: -2;
+        }
+        
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(192, 38, 211, 0.55);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+            box-shadow: 0 0 8px rgba(192, 38, 211, 0.6);
+        }
+        
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            15% { opacity: 0.7; }
+            85% { opacity: 0.7; }
+            100% { transform: translateY(-80px) scale(0.3); opacity: 0; }
+        }
+        
+        .user-badge {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(20, 15, 35, 0.75);
+            padding: 5px 12px 5px 5px;
+            border-radius: 40px;
+            backdrop-filter: blur(16px);
+            z-index: 100;
+            border: 1px solid rgba(192, 38, 211, 0.25);
+        }
+        
+        .user-badge img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid #c026d3;
+        }
+        
+        .user-badge .name {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #e9d5ff;
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: rgba(25, 18, 45, 0.95);
+            color: white;
+            padding: 13px 22px;
+            border-radius: 16px;
+            font-size: 13.5px;
+            font-weight: 500;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+            border: 1px solid rgba(192, 38, 211, 0.35);
+            max-width: 88%;
+            text-align: center;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 5, 15, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .loader.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(192, 38, 211, 0.15);
+            border-top-color: #c026d3;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .page {
+            position: absolute;
+            inset: 0;
+            padding: 68px 16px 24px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            opacity: 0;
+            transform: translateX(36px) scale(0.97);
+            transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow-y: auto;
+        }
+        
+        .page.active {
+            display: flex;
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+        
+        .logo {
+            font-size: clamp(32px, 8vw, 44px);
+            font-weight: 900;
+            background: linear-gradient(90deg, #ff69b4, #c026d3, #a855f7, #ff69b4);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+            animation: gentleFlow 12s ease infinite;
+        }
+        
+        @keyframes gentleFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .subtitle {
+            color: #a1a1aa;
+            font-size: clamp(13px, 3.5vw, 15.5px);
+            margin-bottom: 28px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .card {
+            background: rgba(25, 18, 45, 0.7);
+            border-radius: 22px;
+            padding: 24px 20px;
+            width: 100%;
+            max-width: 330px;
+            border: 1px solid rgba(192, 38, 211, 0.18);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            margin-bottom: 18px;
+            backdrop-filter: blur(20px);
+            text-align: left;
+            opacity: 0;
+            transform: translateY(18px) scale(0.97);
+            animation: cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        @keyframes cardIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        h2 {
+            font-size: clamp(18px, 4.8vw, 22px);
+            margin: 0 0 14px 0;
+            font-weight: 700;
+            text-align: center;
+            color: #f5f3ff;
+        }
+        
+        .status {
+            font-size: clamp(14px, 3.8vw, 16.5px);
+            font-weight: 800;
+            margin: 6px 0 18px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .status-green {
+            background: linear-gradient(135deg, #15803d, #22c55e);
+            color: white;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+        }
+        
+        .status-red {
+            background: linear-gradient(135deg, #991b1b, #ef4444);
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
+        }
+        
+        .stat {
+            margin: 10px 0;
+            font-size: clamp(13px, 3.4vw, 14.5px);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .label { color: #a1a1aa; font-weight: 500; }
+        .value { color: #f5f3ff; font-weight: 600; }
+        
+        button {
+            width: 100%;
+            max-width: 310px;
+            background: linear-gradient(135deg, #c026d3, #7e22ce);
+            color: white;
+            border: none;
+            padding: 15px 22px;
+            font-size: clamp(14.5px, 3.8vw, 16px);
+            font-weight: 600;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 8px 28px rgba(192, 38, 211, 0.4);
+            margin-top: 8px;
+        }
+        
+        button:active { transform: scale(0.96); }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3f3f46, #52525b);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        }
+        
+        .btn-share {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+        }
+        
+        .plan-btn {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+        }
+        
+        .admin-stats .stat {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        
+        .premium-list {
+            margin-top: 16px;
+            font-size: 13.5px;
+            color: #d4d4d8;
+        }
+        
+        .info-text {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e9d5ff;
+            line-height: 1.5;
+            padding: 20px 10px;
+        }
+    </style>
+</head>
+<body>
 
-const token = 'СЮДА_ТОКЕН_БОТА';
-const bot = new TelegramBot(token, { polling: true });
+    <div class="bg"></div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
 
-const WEB_APP_URL = 'https://lollipopack-webapp.vercel.app/';
+    <div class="user-badge">
+        <img id="userAvatar" src="" alt="" style="display:none;">
+        <div class="name" id="userBadgeName">@user</div>
+    </div>
 
-console.log('Бот запущен...');
+    <!-- Страница 1 -->
+    <div id="page1" class="page active">
+        <div class="logo">lollipop.cc</div>
+        <p class="subtitle">твой путь к успеху</p>
 
-// /start + поддержка deep-link (buy_1, buy_7 и т.д.)
-bot.onText(/\/start(.*)/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const param = (match[1] || '').trim();
+        <div class="card">
+            <h2>Приветствую вас, <span id="username" style="color:#e879f9;"></span></h2>
+            <p style="color:#a1a1aa; text-align:center; margin-top:8px; font-size:13.5px;">Premium Product Lollipop.cc</p>
+        </div>
 
-  // Если пришли с параметром тарифа
-  const plans = {
-    buy_1:  { days: 1,  amount: 50,  label: '1 день' },
-    buy_7:  { days: 7,  amount: 250, label: '7 дней' },
-    buy_14: { days: 14, amount: 500, label: '14 дней' },
-    buy_30: { days: 30, amount: 800, label: '30 дней' }
-  };
+        <button onclick="switchPage('page2')">ПРОВЕРИТЬ ПОДПИСКУ →</button>
+        <button class="btn-info" onclick="switchPage('page4')">ℹ Информация</button>
+        <button class="btn-share" onclick="shareApp()">↗ Поделиться</button>
+    </div>
 
-  if (plans[param]) {
-    const plan = plans[param];
-    try {
-      await bot.sendInvoice(
-        chatId,
-        `Подписка lollipop.cc — ${plan.label}`,
-        `Доступ к премиум на ${plan.label}`,
-        `premium_${plan.days}_${chatId}`,
-        '',
-        'XTR',
-        [{ label: plan.label, amount: plan.amount }]
-      );
-    } catch (err) {
-      console.log(err);
-      bot.sendMessage(chatId, 'Ошибка при создании счёта');
-    }
-    return;
-  }
+    <!-- Страница 2 -->
+    <div id="page2" class="page">
+        <div class="logo">lollipop.cc</div>
+        <p class="subtitle">твой путь к успеху</p>
+        <div class="card" id="subscriptionCard"></div>
+        <button onclick="switchPage('page1', true)">← НАЗАД</button>
+    </div>
 
-  // Обычный /start
-  const text = `Привет! 👋
+    <!-- Страница 3 — Админ -->
+    <div id="page3" class="page">
+        <div class="logo">lollipop.cc</div>
+        <p class="subtitle">Админ-панель</p>
+        <div class="card">
+            <h2>Статистика</h2>
+            <div class="admin-stats">
+                <div class="stat"><span class="label">Пользователей</span><span class="value" id="totalUsers">—</span></div>
+                <div class="stat"><span class="label">Всего подписок</span><span class="value">2</span></div>
+                <div class="stat"><span class="label">Админы</span><span class="value">2</span></div>
+            </div>
+            <div class="premium-list">
+                <b style="color:#e879f9;">Активные подписки</b>
+                <div>✅ @wellsecurity (Admin)</div>
+                <div>✅ @exesvater (Admin)</div>
+            </div>
+        </div>
+        <button class="btn-secondary" onclick="switchPage('page2', true)">← НАЗАД</button>
+    </div>
 
-Добро пожаловать в *lollipop.cc*
+    <!-- Страница 4 — Информация -->
+    <div id="page4" class="page">
+        <div class="logo">lollipop.cc</div>
+        <p class="subtitle">Информация</p>
+        <div class="card">
+            <div class="info-text">Чит пока находится в разработке</div>
+        </div>
+        <button class="btn-secondary" onclick="switchPage('page1', true)">← НАЗАД</button>
+    </div>
 
-Нажми кнопку ниже, чтобы открыть приложение:`;
+    <!-- Страница 5 — Выбор тарифа -->
+    <div id="page5" class="page">
+        <div class="logo">lollipop.cc</div>
+        <p class="subtitle">Выбор подписки</p>
+        <div class="card">
+            <h2>Выберите тариф</h2>
+            <button class="plan-btn" onclick="payStars('buy_1')"><span>1 день</span><span>50 ⭐</span></button>
+            <button class="plan-btn" onclick="payStars('buy_7')"><span>7 дней</span><span>250 ⭐</span></button>
+            <button class="plan-btn" onclick="payStars('buy_14')"><span>14 дней</span><span>500 ⭐</span></button>
+            <button class="plan-btn" onclick="payStars('buy_30')"><span>30 дней</span><span>800 ⭐</span></button>
+        </div>
+        <button class="btn-secondary" onclick="switchPage('page2', true)">← НАЗАД</button>
+    </div>
 
-  bot.sendMessage(chatId, text, {
-    parse_mode: 'Markdown',
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: '🚀 Открыть приложение', web_app: { url: WEB_APP_URL } }],
-        [{ text: '⭐ Оплатить подписку (Stars)', callback_data: 'choose_plan' }]
-      ]
-    }
-  });
-});
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
 
-// Выбор тарифа внутри бота
-bot.on('callback_query', async (query) => {
-  const chatId = query.message.chat.id;
-  const data = query.data;
+        // Ссылка на твой Replit
+        const API_URL = 'https://727bfe89-4a3f-456e-b0d5-9adda5869575-00-2gvhc0z2lws1s.riker.replit.dev';
 
-  if (data === 'choose_plan') {
-    bot.editMessageText('Выберите срок подписки:', {
-      chat_id: chatId,
-      message_id: query.message.message_id,
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: '1 день — 50 ⭐', callback_data: 'buy_1' }],
-          [{ text: '7 дней — 250 ⭐', callback_data: 'buy_7' }],
-          [{ text: '14 дней — 500 ⭐', callback_data: 'buy_14' }],
-          [{ text: '30 дней — 800 ⭐', callback_data: 'buy_30' }]
-        ]
-      }
-    });
-  }
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 22; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.width = p.style.height = Math.random() * 3 + 1.2 + 'px';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (Math.random() * 14 + 10) + 's';
+                p.style.animationDelay = '-' + Math.random() * 15 + 's';
+                p.style.opacity = Math.random() * 0.5 + 0.2;
+                container.appendChild(p);
+            }
+        }
 
-  const plans = {
-    buy_1:  { days: 1,  amount: 50,  label: '1 день' },
-    buy_7:  { days: 7,  amount: 250, label: '7 дней' },
-    buy_14: { days: 14, amount: 500, label: '14 дней' },
-    buy_30: { days: 30, amount: 800, label: '30 дней' }
-  };
+        function showToast(message, duration = 2800) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
 
-  if (plans[data]) {
-    const plan = plans[data];
-    try {
-      await bot.sendInvoice(
-        chatId,
-        `Подписка lollipop.cc — ${plan.label}`,
-        `Доступ к премиум на ${plan.label}`,
-        `premium_${plan.days}_${chatId}`,
-        '',
-        'XTR',
-        [{ label: plan.label, amount: plan.amount }]
-      );
-    } catch (err) {
-      bot.sendMessage(chatId, 'Ошибка при создании счёта');
-    }
-  }
+        function showLoader() {
+            document.getElementById('loader').classList.add('show');
+        }
+        
+        function hideLoader() {
+            document.getElementById('loader').classList.remove('show');
+        }
 
-  bot.answerCallbackQuery(query.id);
-});
+        const user = tg.initDataUnsafe.user;
+        let currentUsername = '';
+        let currentUserId = '';
+        
+        if (user) {
+            currentUsername = user.username ? user.username.toLowerCase() : '';
+            currentUserId = user.id || '';
+            
+            document.getElementById('username').textContent = 
+                user.username ? '@' + user.username : (user.first_name || 'Геймер');
+            
+            document.getElementById('userBadgeName').textContent = 
+                user.username ? '@' + user.username : (user.first_name || 'User');
+            
+            if (user.photo_url) {
+                const img = document.getElementById('userAvatar');
+                img.src = user.photo_url;
+                img.style.display = 'block';
+            }
+        }
 
-bot.on('pre_checkout_query', (q) => bot.answerPreCheckoutQuery(q.id, true));
+        const premiumUsers = ['wellsecurity', 'exesvater'];
+        const adminUsers = ['wellsecurity', 'exesvater'];
 
-bot.on('successful_payment', (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, `✅ Оплата прошла успешно!\n\nПодписка активирована. Спасибо! 💜`);
-});
+        function hasSubscription() {
+            return premiumUsers.includes(currentUsername) || adminUsers.includes(currentUsername);
+        }
+
+        function switchPage(targetId, isBack = false) {
+            showLoader();
+            
+            const allPages = document.querySelectorAll('.page');
+            const targetPage = document.getElementById(targetId);
+            
+            allPages.forEach(page => {
+                if (page !== targetPage) {
+                    page.style.opacity = '0';
+                    page.style.transform = isBack ? 'translateX(36px) scale(0.97)' : 'translateX(-36px) scale(0.97)';
+                    setTimeout(() => {
+                        page.classList.remove('active');
+                        page.style.display = 'none';
+                    }, 480);
+                }
+            });
+            
+            setTimeout(() => {
+                targetPage.style.display = 'flex';
+                targetPage.classList.add('active');
+                targetPage.style.opacity = '0';
+                targetPage.style.transform = isBack ? 'translateX(-36px) scale(0.97)' : 'translateX(36px) scale(0.97)';
+                targetPage.offsetHeight;
+                targetPage.style.opacity = '1';
+                targetPage.style.transform = 'translateX(0) scale(1)';
+                
+                if (targetId === 'page2') renderSubscriptionPage();
+                setTimeout(hideLoader, 320);
+            }, 50);
+        }
+
+        function renderSubscriptionPage() {
+            const card = document.getElementById('subscriptionCard');
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'cardIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+            
+            const isAdmin = adminUsers.includes(currentUsername);
+            const isPremium = hasSubscription();
+
+            if (isAdmin) {
+                card.innerHTML = `
+                    <h2>Статус подписки</h2>
+                    <div class="status status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</div>
+                    <div class="stat"><span class="label">Версия</span> <span class="value">Admin Version</span></div>
+                    <div class="stat"><span class="label">Статус</span> <span class="value">Навсегда</span></div>
+                    <div class="stat"><span class="label">Оплачено</span> <span class="value">19.07.2026</span></div>
+                    <div class="stat"><span class="label">Завершение</span> <span class="value">∞ Бессрочно</span></div>
+                    <button onclick="switchPage('page3')" style="margin-top:16px;">🔧 АДМИН-ПАНЕЛЬ</button>
+                `;
+            } else if (isPremium) {
+                card.innerHTML = `
+                    <h2>Статус подписки</h2>
+                    <div class="status status-green">✅ ПОДПИСКА ДЕЙСТВУЕТ</div>
+                    <div class="stat"><span class="label">Версия</span> <span class="value">Premium</span></div>
+                    <div class="stat"><span class="label">Статус</span> <span class="value">Активна</span></div>
+                    <div class="stat"><span class="label">Оплачено</span> <span class="value">—</span></div>
+                    <div class="stat"><span class="label">Завершение</span> <span class="value">—</span></div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <h2>Статус подписки</h2>
+                    <div class="status status-red">❌ ПОДПИСКА ОТСУТСТВУЕТ</div>
+                    <div class="stat"><span class="label">Версия</span> <span class="value">—</span></div>
+                    <div class="stat"><span class="label">Оплачено</span> <span class="value">—</span></div>
+                    <div class="stat"><span class="label">Завершение</span> <span class="value">—</span></div>
+                    <p style="color:#fca5a5; margin-top:14px; font-size:12.5px; text-align:center;">
+                        Оформите подписку для доступа к премиум-функциям
+                    </p>
+                    <button onclick="switchPage('page5')" style="margin-top:14px;">⭐ ОПЛАТИТЬ ПОДПИСКУ</button>
+                `;
+            }
+        }
+
+        // ===== Оплата Stars прямо в веб-приложении =====
+        async function payStars(plan) {
+            showLoader();
+            showToast('Создаём счёт...');
+
+            try {
+                const response = await fetch(`${API_URL}/api/create-invoice?plan=${plan}&user_id=${currentUserId}`);
+                const data = await response.json();
+
+                if (data.invoiceLink) {
+                    // Открываем оплату прямо внутри Mini App
+                    tg.openInvoice(data.invoiceLink, (status) => {
+                        if (status === 'paid') {
+                            showToast('✅ Оплата прошла успешно!');
+                        } else if (status === 'cancelled') {
+                            showToast('Оплата отменена');
+                        } else {
+                            showToast('Произошла ошибка');
+                        }
+                    });
+                } else {
+                    showToast('Не удалось создать счёт');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Ошибка соединения с сервером');
+            }
+
+            hideLoader();
+        }
+
+        function shareApp() {
+            const text = 'Проверь свою подписку в Lollipop.cc 🔥';
+            const url = 'https://t.me/lollipophack_bot';
+            
+            if (tg.openTelegramLink) {
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`);
+            }
+        }
+
+        createParticles();
+    </script>
+</body>
+</html>
